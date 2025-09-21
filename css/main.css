@@ -1,3 +1,155 @@
+/* Botón flotante y mensaje sorpresa */
+.btn-flotante {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: linear-gradient(90deg, #f9fd25 60%, #f7b42c 100%);
+  color: #222;
+  font-size: 2rem;
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.18);
+  cursor: pointer;
+  z-index: 200;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-flotante:hover {
+  transform: scale(1.12) rotate(-8deg);
+  box-shadow: 0 8px 32px rgba(255, 215, 0, 0.28);
+}
+.sorpresa-msg {
+  position: fixed;
+  bottom: 90px;
+  right: 32px;
+  background: #fffbe0;
+  color: #222;
+  padding: 18px 28px;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(255, 215, 0, 0.18);
+  font-size: 1.1rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(30px) scale(0.95);
+  transition: opacity 0.4s, transform 0.4s;
+  z-index: 201;
+}
+.sorpresa-msg.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+@media only screen and (max-width: 600px) {
+  .btn-flotante {
+    bottom: 14px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.3rem;
+  }
+  .sorpresa-msg {
+    bottom: 65px;
+    right: 10px;
+    font-size: 0.95rem;
+    padding: 12px 16px;
+  }
+}
+/* Pétalos animados flotando */
+.petal {
+  position: fixed;
+  top: -40px;
+  width: 28px;
+  height: 18px;
+  background: #f9fd25;
+  border-radius: 60% 80% 60% 80%;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.18);
+  animation: fallPetal linear infinite;
+}
+
+@keyframes fallPetal {
+  0% {
+    top: -40px;
+    transform: translateX(0) rotate(0deg) scale(1);
+  }
+  80% {
+    opacity: 0.85;
+  }
+  100% {
+    top: 110vh;
+    transform: translateX(60vw) rotate(360deg) scale(0.8);
+    opacity: 0.1;
+  }
+}
+/* Fondo animado y detalles para flower.html */
+.flower-bg {
+  min-height: 100vh;
+  background: linear-gradient(120deg, #f9fd25 0%, #f7b42c 100%);
+  background-size: 200% 200%;
+  animation: bgMove 8s ease-in-out infinite alternate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+}
+
+@keyframes bgMove {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
+}
+
+.footer-flower {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 100vw;
+  text-align: center;
+  color: #222;
+  font-size: 1rem;
+  opacity: 0.7;
+  letter-spacing: 1px;
+  z-index: 10;
+}
+
+@media only screen and (max-width: 600px) {
+  .footer-flower {
+    font-size: 0.85rem;
+  }
+  .novia-img {
+    max-width: 120px;
+    width: 80vw;
+    border-width: 2px;
+  }
+}
+/* Imagen de la novia centrada y con estilo */
+.noviaxd-img-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 40px;
+  margin-bottom: 30px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+.noviaxd-img {
+  max-width: 220px;
+  width: 90vw;
+  height: auto;
+  border-radius: 50%;
+  box-shadow: 0 4px 24px 0 rgba(255,255,0,0.25), 0 1.5px 8px 0 rgba(0,0,0,0.15);
+  border: 4px solid #fff700;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+.noviaxd-img:hover {
+  transform: scale(1.05) rotate(-2deg);
+  box-shadow: 0 8px 32px 0 rgba(255,255,0,0.35), 0 3px 12px 0 rgba(0,0,0,0.18);
+}
 *,
 *::after,
 *::before {
@@ -11,13 +163,14 @@
 }
 
 body {
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
   min-height: 100vh;
   background-color: var(--dark-color);
   overflow: hidden;
   perspective: 1000px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 #lyrics {
@@ -40,15 +193,19 @@ body {
 
 }
 .titulo {
-  margin-bottom: 180px;
+  margin-bottom: 120px;
+  margin-top: 10px;
   font-family: "Arial Narrow", Arial, sans-serif;
   color: yellow;
-  position: absolute;
   font-weight: bold;
-  letter-spacing: 10px;
+  letter-spacing: 6px;
   opacity: 0;
   animation: fadeIn 3s ease-in-out forwards;
   text-align: center;
+  position: static;
+  width: 100%;
+  max-width: 700px;
+  z-index: 2;
 }
 @keyframes fadeIn {
   from {
@@ -105,19 +262,42 @@ body {
 .flowers {
   position: relative;
   transform: scale(0.9);
-  /*margin-bottom: 100px;
-  */
+  margin: 0 auto 40px auto;
+  width: 100vw;
+  max-width: 700px;
+  min-width: 280px;
 }
 
 @media only screen and (max-width: 600px) {
-  /* Estilos específicos para dispositivos con un ancho máximo de 600px */
-.flowers {
-      font-size: 14px;
-      margin-bottom: 35%;
-      letter-spacing: 3px;
-      transform: scale(1.0);
-}
-
+  body {
+    padding: 0 2vw;
+  }
+  .titulo {
+    font-size: 18px;
+    margin-bottom: 60px;
+    margin-top: 10px;
+    letter-spacing: 2px;
+    max-width: 98vw;
+  }
+  .novia-img {
+    max-width: 120px;
+    width: 80vw;
+    border-width: 2px;
+  }
+  .flowers {
+    font-size: 12px;
+    margin-bottom: 20vw;
+    letter-spacing: 1px;
+    transform: scale(0.95);
+    min-width: 0;
+    max-width: 98vw;
+  }
+  #lyrics {
+    font-size: 13px;
+    margin-bottom: 120px;
+    letter-spacing: 1.5px;
+    max-width: 98vw;
+  }
 }
 
 .flower {
